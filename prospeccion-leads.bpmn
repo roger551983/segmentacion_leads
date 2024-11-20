@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0r919kz" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.28.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <bpmn:process id="ProspeccionLeads" name="Prospección Leads" isExecutable="true" camunda:historyTimeToLive="P360D">
+    <bpmn:extensionElements>
+      <camunda:executionListener event="end">
+        <camunda:script scriptFormat="Groovy" resource="deployment://segmento.groovy" />
+      </camunda:executionListener>
+    </bpmn:extensionElements>
+    <bpmn:serviceTask id="Activity_19lu70d" name="Obtener variables MailerLite">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${urlServicioObtenerLeads}</camunda:inputParameter>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+                <camunda:entry key="Accept">application/json</camunda:entry>
+                <camunda:entry key="X-MailerLite-ApiKey">eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI0IiwianRpIjoiMWE5YjI3MDVhOWU0MzVjZjUzYTM4ODY4ZTk5ZjFkNWNlNWQzMTQxODBhNmI4NDdmZmM2MjA1NDc5MzdjOGM5ZTQwMTk0ZmNlNzNmOTc2ZDEiLCJpYXQiOjE3MzA2NzU4NTUuOTg4Njk1LCJuYmYiOjE3MzA2NzU4NTUuOTg4Njk4LCJleHAiOjQ4ODYzNDk0NTUuOTc4ODEzLCJzdWIiOiIxNzM3NTYiLCJzY29wZXMiOltdfQ.tCBOjI81PBVOepx9VcELtv1I6XHzUqxSQF5G87PSG-qrnLctAtufILZk3cwtI0YpontkLTIk1xpHcyF9ALFacxbm359k5_ODqlIA0nl6k3-GqY0jV5dnyzwQxkgae5c2LRflThYC5am4XeU711tghzwQ-2xu_sCi_Y_nfxvjJia1yjcIoHECG5KJQ6oxETHw3iB5zkCm6fTVtcslzcT0mDl-UuCYCjM7dJ9OvHR8Lf3Fi8Io50Sj1NBGRCZ9d-Auw41IADhpCfwM39MNovzPjLniiBDlaLdOACEXU5i-5OeddOeDFWocBztTqOHdRLY2hdQaxmTBIAD7X2RgB-a_fr34njdPCr74I85xkP1pED9OjxtuCsHp0cjcwOWPb5meW-53Y9hQmUzMYUqj1AlpbUFcVktr-x0f3seHydsHFzSalUJDHvdJW16x19QCrFP1rlyKXClR6D_3Z8omBroGc-J2JIDNR76DhWf-KJsa1TOy446wxnfnFUie8SjtfXoW5oaSOZpR-bCMJOSGrtjs9ALSF6mpSNRBSkGD09mXwpe3QWkcFM-EdJhLiDVD-ysj-9nuoDM6zh382ll4Xc84UkdX9p5kLW_aPrTekfZlEnU_CZXvwIAIZyDGKipuRhLOfLD5F1go89PgTlTpgf_VU7zFGIFLDrxI07azL55fjz4</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:outputParameter name="outputMailerLite">
+              <camunda:script scriptFormat="Groovy" resource="deployment://script-obtener-leads.groovy" />
+            </camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1rtdz56</bpmn:incoming>
+      <bpmn:outgoing>Flow_14u06va</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:businessRuleTask id="Activity_0hb4wyo" name="Determinar prospección" camunda:resultVariable="resultadoSegmentacion" camunda:decisionRef="DeterminarSegmentacion">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="Groovy" resource="deployment://segmento2.groovy" />
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_011hrse</bpmn:incoming>
+      <bpmn:outgoing>Flow_165d6p1</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true" camunda:collection="contactosMailerLite" camunda:elementVariable="itemLead" />
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_165d6p1" sourceRef="Activity_0hb4wyo" targetRef="Activity_019c58h" />
+    <bpmn:subProcess id="Activity_0oua3oz" name="Envío múltiple">
+      <bpmn:incoming>Flow_0wpdrri</bpmn:incoming>
+      <bpmn:outgoing>Flow_1khlznz</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:collection="resultadoSegmentacion" camunda:elementVariable="itemSegmentacion" />
+      <bpmn:startEvent id="Event_0z8l22y">
+        <bpmn:outgoing>Flow_05qux2n</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:exclusiveGateway id="Gateway_15002r0" name="Tipo segmento?">
+        <bpmn:incoming>Flow_05qux2n</bpmn:incoming>
+        <bpmn:outgoing>Flow_1477b0j</bpmn:outgoing>
+        <bpmn:outgoing>Flow_10rvjl3</bpmn:outgoing>
+        <bpmn:outgoing>Flow_1sv00jb</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:sequenceFlow id="Flow_05qux2n" sourceRef="Event_0z8l22y" targetRef="Gateway_15002r0" />
+      <bpmn:exclusiveGateway id="Gateway_0151g95">
+        <bpmn:incoming>Flow_07x8qyg</bpmn:incoming>
+        <bpmn:incoming>Flow_03tsfhc</bpmn:incoming>
+        <bpmn:incoming>Flow_1yd4zh2</bpmn:incoming>
+        <bpmn:outgoing>Flow_1hgi0ph</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:serviceTask id="Activity_1dvwxnr" name="Enviar grupo ${itemSegmentacion}">
+        <bpmn:extensionElements>
+          <camunda:connector>
+            <camunda:inputOutput>
+              <camunda:inputParameter name="url">https://api.mailerlite.com/api/v2/groups/71439509442528445/subscribers</camunda:inputParameter>
+              <camunda:inputParameter name="method">POST</camunda:inputParameter>
+              <camunda:inputParameter name="headers">
+                <camunda:map>
+                  <camunda:entry key="Content-Type">application/json</camunda:entry>
+                  <camunda:entry key="Accept">application/json</camunda:entry>
+                  <camunda:entry key="X-MailerLite-ApiKey">eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI0IiwianRpIjoiMWE5YjI3MDVhOWU0MzVjZjUzYTM4ODY4ZTk5ZjFkNWNlNWQzMTQxODBhNmI4NDdmZmM2MjA1NDc5MzdjOGM5ZTQwMTk0ZmNlNzNmOTc2ZDEiLCJpYXQiOjE3MzA2NzU4NTUuOTg4Njk1LCJuYmYiOjE3MzA2NzU4NTUuOTg4Njk4LCJleHAiOjQ4ODYzNDk0NTUuOTc4ODEzLCJzdWIiOiIxNzM3NTYiLCJzY29wZXMiOltdfQ.tCBOjI81PBVOepx9VcELtv1I6XHzUqxSQF5G87PSG-qrnLctAtufILZk3cwtI0YpontkLTIk1xpHcyF9ALFacxbm359k5_ODqlIA0nl6k3-GqY0jV5dnyzwQxkgae5c2LRflThYC5am4XeU711tghzwQ-2xu_sCi_Y_nfxvjJia1yjcIoHECG5KJQ6oxETHw3iB5zkCm6fTVtcslzcT0mDl-UuCYCjM7dJ9OvHR8Lf3Fi8Io50Sj1NBGRCZ9d-Auw41IADhpCfwM39MNovzPjLniiBDlaLdOACEXU5i-5OeddOeDFWocBztTqOHdRLY2hdQaxmTBIAD7X2RgB-a_fr34njdPCr74I85xkP1pED9OjxtuCsHp0cjcwOWPb5meW-53Y9hQmUzMYUqj1AlpbUFcVktr-x0f3seHydsHFzSalUJDHvdJW16x19QCrFP1rlyKXClR6D_3Z8omBroGc-J2JIDNR76DhWf-KJsa1TOy446wxnfnFUie8SjtfXoW5oaSOZpR-bCMJOSGrtjs9ALSF6mpSNRBSkGD09mXwpe3QWkcFM-EdJhLiDVD-ysj-9nuoDM6zh382ll4Xc84UkdX9p5kLW_aPrTekfZlEnU_CZXvwIAIZyDGKipuRhLOfLD5F1go89PgTlTpgf_VU7zFGIFLDrxI07azL55fjz4</camunda:entry>
+                </camunda:map>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="payload">{
+	"name": "${itemSegmentacion.nombre}",
+	"email": "${itemSegmentacion.correo}",
+	"fields": {
+		"company": "${itemSegmentacion.segmento}"
+	}
+}</camunda:inputParameter>
+            </camunda:inputOutput>
+            <camunda:connectorId>http-connector</camunda:connectorId>
+          </camunda:connector>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0b09kxl</bpmn:incoming>
+        <bpmn:outgoing>Flow_07x8qyg</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:endEvent id="Event_0tt9q14">
+        <bpmn:incoming>Flow_1hgi0ph</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_1hgi0ph" sourceRef="Gateway_0151g95" targetRef="Event_0tt9q14" />
+      <bpmn:sequenceFlow id="Flow_1477b0j" name="descubrimiento" sourceRef="Gateway_15002r0" targetRef="Activity_0y6blev">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${itemSegmentacion.segmento=="descubrimiento"}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_07x8qyg" sourceRef="Activity_1dvwxnr" targetRef="Gateway_0151g95" />
+      <bpmn:serviceTask id="Activity_0jl3yji" name="Enviar grupo ${itemSegmentacion}">
+        <bpmn:extensionElements>
+          <camunda:connector>
+            <camunda:inputOutput>
+              <camunda:inputParameter name="url">https://api.mailerlite.com/api/v2/groups/71439544090625528/subscribers</camunda:inputParameter>
+              <camunda:inputParameter name="method">POST</camunda:inputParameter>
+              <camunda:inputParameter name="headers">
+                <camunda:map>
+                  <camunda:entry key="Content-Type">application/json</camunda:entry>
+                  <camunda:entry key="Accept">application/json</camunda:entry>
+                  <camunda:entry key="X-MailerLite-ApiKey">eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI0IiwianRpIjoiMWE5YjI3MDVhOWU0MzVjZjUzYTM4ODY4ZTk5ZjFkNWNlNWQzMTQxODBhNmI4NDdmZmM2MjA1NDc5MzdjOGM5ZTQwMTk0ZmNlNzNmOTc2ZDEiLCJpYXQiOjE3MzA2NzU4NTUuOTg4Njk1LCJuYmYiOjE3MzA2NzU4NTUuOTg4Njk4LCJleHAiOjQ4ODYzNDk0NTUuOTc4ODEzLCJzdWIiOiIxNzM3NTYiLCJzY29wZXMiOltdfQ.tCBOjI81PBVOepx9VcELtv1I6XHzUqxSQF5G87PSG-qrnLctAtufILZk3cwtI0YpontkLTIk1xpHcyF9ALFacxbm359k5_ODqlIA0nl6k3-GqY0jV5dnyzwQxkgae5c2LRflThYC5am4XeU711tghzwQ-2xu_sCi_Y_nfxvjJia1yjcIoHECG5KJQ6oxETHw3iB5zkCm6fTVtcslzcT0mDl-UuCYCjM7dJ9OvHR8Lf3Fi8Io50Sj1NBGRCZ9d-Auw41IADhpCfwM39MNovzPjLniiBDlaLdOACEXU5i-5OeddOeDFWocBztTqOHdRLY2hdQaxmTBIAD7X2RgB-a_fr34njdPCr74I85xkP1pED9OjxtuCsHp0cjcwOWPb5meW-53Y9hQmUzMYUqj1AlpbUFcVktr-x0f3seHydsHFzSalUJDHvdJW16x19QCrFP1rlyKXClR6D_3Z8omBroGc-J2JIDNR76DhWf-KJsa1TOy446wxnfnFUie8SjtfXoW5oaSOZpR-bCMJOSGrtjs9ALSF6mpSNRBSkGD09mXwpe3QWkcFM-EdJhLiDVD-ysj-9nuoDM6zh382ll4Xc84UkdX9p5kLW_aPrTekfZlEnU_CZXvwIAIZyDGKipuRhLOfLD5F1go89PgTlTpgf_VU7zFGIFLDrxI07azL55fjz4</camunda:entry>
+                </camunda:map>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="payload">{
+	"name": "${itemSegmentacion.nombre}",
+	"email": "${itemSegmentacion.correo}",
+	"fields": {
+		"company": "${itemSegmentacion.segmento}"
+	}
+}</camunda:inputParameter>
+            </camunda:inputOutput>
+            <camunda:connectorId>http-connector</camunda:connectorId>
+          </camunda:connector>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1bx99z8</bpmn:incoming>
+        <bpmn:outgoing>Flow_03tsfhc</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sequenceFlow id="Flow_10rvjl3" name="consideración" sourceRef="Gateway_15002r0" targetRef="Activity_013b127">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${itemSegmentacion.segmento=="consideracion"}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_03tsfhc" sourceRef="Activity_0jl3yji" targetRef="Gateway_0151g95" />
+      <bpmn:serviceTask id="Activity_14vp2y3" name="Enviar grupo ${itemSegmentacion}">
+        <bpmn:extensionElements>
+          <camunda:connector>
+            <camunda:inputOutput>
+              <camunda:inputParameter name="url">https://api.mailerlite.com/api/v2/groups/71439572871940005/subscribers</camunda:inputParameter>
+              <camunda:inputParameter name="method">POST</camunda:inputParameter>
+              <camunda:inputParameter name="headers">
+                <camunda:map>
+                  <camunda:entry key="Content-Type">application/json</camunda:entry>
+                  <camunda:entry key="Accept">application/json</camunda:entry>
+                  <camunda:entry key="X-MailerLite-ApiKey">eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI0IiwianRpIjoiMWE5YjI3MDVhOWU0MzVjZjUzYTM4ODY4ZTk5ZjFkNWNlNWQzMTQxODBhNmI4NDdmZmM2MjA1NDc5MzdjOGM5ZTQwMTk0ZmNlNzNmOTc2ZDEiLCJpYXQiOjE3MzA2NzU4NTUuOTg4Njk1LCJuYmYiOjE3MzA2NzU4NTUuOTg4Njk4LCJleHAiOjQ4ODYzNDk0NTUuOTc4ODEzLCJzdWIiOiIxNzM3NTYiLCJzY29wZXMiOltdfQ.tCBOjI81PBVOepx9VcELtv1I6XHzUqxSQF5G87PSG-qrnLctAtufILZk3cwtI0YpontkLTIk1xpHcyF9ALFacxbm359k5_ODqlIA0nl6k3-GqY0jV5dnyzwQxkgae5c2LRflThYC5am4XeU711tghzwQ-2xu_sCi_Y_nfxvjJia1yjcIoHECG5KJQ6oxETHw3iB5zkCm6fTVtcslzcT0mDl-UuCYCjM7dJ9OvHR8Lf3Fi8Io50Sj1NBGRCZ9d-Auw41IADhpCfwM39MNovzPjLniiBDlaLdOACEXU5i-5OeddOeDFWocBztTqOHdRLY2hdQaxmTBIAD7X2RgB-a_fr34njdPCr74I85xkP1pED9OjxtuCsHp0cjcwOWPb5meW-53Y9hQmUzMYUqj1AlpbUFcVktr-x0f3seHydsHFzSalUJDHvdJW16x19QCrFP1rlyKXClR6D_3Z8omBroGc-J2JIDNR76DhWf-KJsa1TOy446wxnfnFUie8SjtfXoW5oaSOZpR-bCMJOSGrtjs9ALSF6mpSNRBSkGD09mXwpe3QWkcFM-EdJhLiDVD-ysj-9nuoDM6zh382ll4Xc84UkdX9p5kLW_aPrTekfZlEnU_CZXvwIAIZyDGKipuRhLOfLD5F1go89PgTlTpgf_VU7zFGIFLDrxI07azL55fjz4</camunda:entry>
+                </camunda:map>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="payload">{
+	"name": "${itemSegmentacion.nombre}",
+	"email": "${itemSegmentacion.correo}",
+	"fields": {
+		"company": "${itemSegmentacion.segmento}"
+	}
+}</camunda:inputParameter>
+            </camunda:inputOutput>
+            <camunda:connectorId>http-connector</camunda:connectorId>
+          </camunda:connector>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1hvmvwi</bpmn:incoming>
+        <bpmn:outgoing>Flow_1yd4zh2</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sequenceFlow id="Flow_1sv00jb" name="decisión" sourceRef="Gateway_15002r0" targetRef="Activity_0kcg2r6">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${itemSegmentacion.segmento=="decision"}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_1yd4zh2" sourceRef="Activity_14vp2y3" targetRef="Gateway_0151g95" />
+      <bpmn:sequenceFlow id="Flow_0b09kxl" sourceRef="Activity_0y6blev" targetRef="Activity_1dvwxnr" />
+      <bpmn:userTask id="Activity_0y6blev" name="Revisar ${itemSegmentacion.segmento}">
+        <bpmn:incoming>Flow_1477b0j</bpmn:incoming>
+        <bpmn:outgoing>Flow_0b09kxl</bpmn:outgoing>
+      </bpmn:userTask>
+      <bpmn:sequenceFlow id="Flow_1bx99z8" sourceRef="Activity_013b127" targetRef="Activity_0jl3yji" />
+      <bpmn:userTask id="Activity_013b127" name="Revisar ${itemSegmentacion.segmento}">
+        <bpmn:incoming>Flow_10rvjl3</bpmn:incoming>
+        <bpmn:outgoing>Flow_1bx99z8</bpmn:outgoing>
+      </bpmn:userTask>
+      <bpmn:sequenceFlow id="Flow_1hvmvwi" sourceRef="Activity_0kcg2r6" targetRef="Activity_14vp2y3" />
+      <bpmn:userTask id="Activity_0kcg2r6" name="Revisar ${itemSegmentacion.segmento}">
+        <bpmn:incoming>Flow_1sv00jb</bpmn:incoming>
+        <bpmn:outgoing>Flow_1hvmvwi</bpmn:outgoing>
+      </bpmn:userTask>
+    </bpmn:subProcess>
+    <bpmn:endEvent id="Event_0qg3brs">
+      <bpmn:incoming>Flow_1khlznz</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1khlznz" sourceRef="Activity_0oua3oz" targetRef="Event_0qg3brs" />
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">execution.setVariable("urlServicioObtenerLeads","https://api.mailerlite.com/api/v2/groups/102936363853154183/subscribers");</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0whr27g</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:subProcess id="Activity_019c58h">
+      <bpmn:incoming>Flow_165d6p1</bpmn:incoming>
+      <bpmn:outgoing>Flow_1sz9wyv</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:collection="resultadoSegmentacion" camunda:elementVariable="itemSegmentacion" />
+      <bpmn:startEvent id="Event_1xnpmh3">
+        <bpmn:outgoing>Flow_1gogf5i</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:endEvent id="Event_00qm3jx">
+        <bpmn:incoming>Flow_1jktng1</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_1jktng1" sourceRef="Activity_0dvlxcf" targetRef="Event_00qm3jx" />
+      <bpmn:userTask id="Activity_0dvlxcf" name="${itemSegmentacion.segmentacion}">
+        <bpmn:extensionElements />
+        <bpmn:incoming>Flow_1gogf5i</bpmn:incoming>
+        <bpmn:outgoing>Flow_1jktng1</bpmn:outgoing>
+      </bpmn:userTask>
+      <bpmn:sequenceFlow id="Flow_1gogf5i" sourceRef="Event_1xnpmh3" targetRef="Activity_0dvlxcf" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_1sz9wyv" sourceRef="Activity_019c58h" targetRef="Activity_1k1zwvg" />
+    <bpmn:sequenceFlow id="Flow_0wpdrri" sourceRef="Activity_1k1zwvg" targetRef="Activity_0oua3oz" />
+    <bpmn:userTask id="Activity_1k1zwvg" name="Validar">
+      <bpmn:incoming>Flow_1sz9wyv</bpmn:incoming>
+      <bpmn:outgoing>Flow_0wpdrri</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_060gzmo">
+      <bpmn:incoming>Flow_0whr27g</bpmn:incoming>
+      <bpmn:outgoing>Flow_1rtdz56</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0wabxkj</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0whr27g" sourceRef="StartEvent_1" targetRef="Gateway_060gzmo" />
+    <bpmn:sequenceFlow id="Flow_1rtdz56" sourceRef="Gateway_060gzmo" targetRef="Activity_19lu70d">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_1kxbeha">
+      <bpmn:incoming>Flow_14u06va</bpmn:incoming>
+      <bpmn:incoming>Flow_0wabxkj</bpmn:incoming>
+      <bpmn:outgoing>Flow_011hrse</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_14u06va" sourceRef="Activity_19lu70d" targetRef="Gateway_1kxbeha" />
+    <bpmn:sequenceFlow id="Flow_011hrse" sourceRef="Gateway_1kxbeha" targetRef="Activity_0hb4wyo" />
+    <bpmn:sequenceFlow id="Flow_0wabxkj" sourceRef="Gateway_060gzmo" targetRef="Gateway_1kxbeha">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="ProspeccionLeads">
+      <bpmndi:BPMNShape id="Activity_14qcin1_di" bpmnElement="Activity_19lu70d">
+        <dc:Bounds x="370" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0g7bs5s_di" bpmnElement="Activity_0hb4wyo">
+        <dc:Bounds x="580" y="140" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_165yt08_di" bpmnElement="Activity_0oua3oz" isExpanded="true">
+        <dc:Bounds x="1520" y="80" width="880" height="430" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0z8l22y_di" bpmnElement="Event_0z8l22y">
+        <dc:Bounds x="1562" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_15002r0_di" bpmnElement="Gateway_15002r0" isMarkerVisible="true">
+        <dc:Bounds x="1655" y="155" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1641" y="125" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0151g95_di" bpmnElement="Gateway_0151g95" isMarkerVisible="true">
+        <dc:Bounds x="2225" y="155" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ef6d1r_di" bpmnElement="Activity_1dvwxnr">
+        <dc:Bounds x="2020" y="140" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0tt9q14_di" bpmnElement="Event_0tt9q14">
+        <dc:Bounds x="2342" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0h3sknp" bpmnElement="Activity_0jl3yji">
+        <dc:Bounds x="2020" y="270" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1b4rqem" bpmnElement="Activity_14vp2y3">
+        <dc:Bounds x="2020" y="400" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1jvdn3k_di" bpmnElement="Activity_0y6blev">
+        <dc:Bounds x="1830" y="140" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_04gaaaj_di" bpmnElement="Activity_013b127">
+        <dc:Bounds x="1830" y="270" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gsb1q0_di" bpmnElement="Activity_0kcg2r6">
+        <dc:Bounds x="1830" y="400" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_05qux2n_di" bpmnElement="Flow_05qux2n">
+        <di:waypoint x="1598" y="180" />
+        <di:waypoint x="1655" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hgi0ph_di" bpmnElement="Flow_1hgi0ph">
+        <di:waypoint x="2275" y="180" />
+        <di:waypoint x="2342" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1477b0j_di" bpmnElement="Flow_1477b0j">
+        <di:waypoint x="1705" y="180" />
+        <di:waypoint x="1830" y="180" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1722" y="162" width="75" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07x8qyg_di" bpmnElement="Flow_07x8qyg">
+        <di:waypoint x="2120" y="180" />
+        <di:waypoint x="2225" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10rvjl3_di" bpmnElement="Flow_10rvjl3">
+        <di:waypoint x="1680" y="205" />
+        <di:waypoint x="1680" y="310" />
+        <di:waypoint x="1830" y="310" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1699" y="288" width="68" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03tsfhc_di" bpmnElement="Flow_03tsfhc">
+        <di:waypoint x="2120" y="310" />
+        <di:waypoint x="2250" y="310" />
+        <di:waypoint x="2250" y="205" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sv00jb_di" bpmnElement="Flow_1sv00jb">
+        <di:waypoint x="1680" y="205" />
+        <di:waypoint x="1680" y="440" />
+        <di:waypoint x="1830" y="440" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1712" y="423" width="41" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yd4zh2_di" bpmnElement="Flow_1yd4zh2">
+        <di:waypoint x="2120" y="440" />
+        <di:waypoint x="2250" y="440" />
+        <di:waypoint x="2250" y="205" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0b09kxl_di" bpmnElement="Flow_0b09kxl">
+        <di:waypoint x="1930" y="180" />
+        <di:waypoint x="2020" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bx99z8_di" bpmnElement="Flow_1bx99z8">
+        <di:waypoint x="1930" y="310" />
+        <di:waypoint x="2020" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hvmvwi_di" bpmnElement="Flow_1hvmvwi">
+        <di:waypoint x="1930" y="440" />
+        <di:waypoint x="2020" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0qg3brs_di" bpmnElement="Event_0qg3brs">
+        <dc:Bounds x="2492" y="152" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1npqvfw_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_019c58h_di" bpmnElement="Activity_019c58h" isExpanded="true">
+        <dc:Bounds x="770" y="65" width="480" height="230" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1xnpmh3_di" bpmnElement="Event_1xnpmh3">
+        <dc:Bounds x="810" y="147" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_00qm3jx_di" bpmnElement="Event_00qm3jx">
+        <dc:Bounds x="1182" y="147" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_03jd5fs_di" bpmnElement="Activity_0dvlxcf">
+        <dc:Bounds x="970" y="125" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1jktng1_di" bpmnElement="Flow_1jktng1">
+        <di:waypoint x="1070" y="165" />
+        <di:waypoint x="1182" y="165" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gogf5i_di" bpmnElement="Flow_1gogf5i">
+        <di:waypoint x="846" y="165" />
+        <di:waypoint x="970" y="165" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_0qv896t_di" bpmnElement="Activity_1k1zwvg">
+        <dc:Bounds x="1350" y="140" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_060gzmo_di" bpmnElement="Gateway_060gzmo" isMarkerVisible="true">
+        <dc:Bounds x="245" y="155" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1kxbeha_di" bpmnElement="Gateway_1kxbeha" isMarkerVisible="true">
+        <dc:Bounds x="495" y="155" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_165d6p1_di" bpmnElement="Flow_165d6p1">
+        <di:waypoint x="680" y="180" />
+        <di:waypoint x="770" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1khlznz_di" bpmnElement="Flow_1khlznz">
+        <di:waypoint x="2400" y="170" />
+        <di:waypoint x="2492" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sz9wyv_di" bpmnElement="Flow_1sz9wyv">
+        <di:waypoint x="1250" y="180" />
+        <di:waypoint x="1350" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wpdrri_di" bpmnElement="Flow_0wpdrri">
+        <di:waypoint x="1450" y="180" />
+        <di:waypoint x="1520" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0whr27g_di" bpmnElement="Flow_0whr27g">
+        <di:waypoint x="188" y="180" />
+        <di:waypoint x="245" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rtdz56_di" bpmnElement="Flow_1rtdz56">
+        <di:waypoint x="295" y="180" />
+        <di:waypoint x="370" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14u06va_di" bpmnElement="Flow_14u06va">
+        <di:waypoint x="470" y="180" />
+        <di:waypoint x="495" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_011hrse_di" bpmnElement="Flow_011hrse">
+        <di:waypoint x="545" y="180" />
+        <di:waypoint x="580" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wabxkj_di" bpmnElement="Flow_0wabxkj">
+        <di:waypoint x="270" y="205" />
+        <di:waypoint x="270" y="300" />
+        <di:waypoint x="520" y="300" />
+        <di:waypoint x="520" y="205" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
