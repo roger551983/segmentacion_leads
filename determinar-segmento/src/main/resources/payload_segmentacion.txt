@@ -1,0 +1,14 @@
+{
+  "businessKey": "1000",
+   "variables": {
+        "cliente": {
+            "type": "Object",
+            "value":  "[{\"condicionLaboral\":\"independiente\",\"edad\":\"40\"},{\"condicionLaboral\":\"dependiente\",\"edad\":\"45\"}]",
+            "valueInfo": {
+                "objectTypeName": "java.util.ArrayList",
+				"serializationDataFormat": "application/json"
+			}
+        }
+      
+    }
+}

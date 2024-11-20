@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" id="Definitions_0ysx8za" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.20.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.21.0">
+  <decision id="DMNColeccion" name="Determinar clasificación cliente" camunda:historyTimeToLive="P360D">
+    <informationRequirement id="InformationRequirement_01ezgxy">
+      <requiredInput href="#InputData_0s6nitr" />
+    </informationRequirement>
+    <informationRequirement id="InformationRequirement_0bwyt8k">
+      <requiredInput href="#InputData_1vffqki" />
+    </informationRequirement>
+    <decisionTable id="DecisionTable_1ksrbkv" hitPolicy="COLLECT">
+      <input id="Input_1" label="Condicion Laboral">
+        <inputExpression id="InputExpression_1" typeRef="string">
+          <text>itemCliente.condicionLaboral</text>
+        </inputExpression>
+        <inputValues id="UnaryTests_1srvjkz">
+          <text>"independiente","dependiente"</text>
+        </inputValues>
+      </input>
+      <input id="InputClause_0p2brqc" label="Edad">
+        <inputExpression id="LiteralExpression_0yrexqh" typeRef="integer">
+          <text>itemCliente.edad</text>
+        </inputExpression>
+      </input>
+      <output id="Output_1" label="Clasificación" name="clasificacion" typeRef="string">
+        <outputValues id="UnaryTests_07fbge1">
+          <text>"Premium","Silver","Bronze"</text>
+        </outputValues>
+      </output>
+      <rule id="DecisionRule_086z66v">
+        <inputEntry id="UnaryTests_0ybrw0c">
+          <text>"independiente"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_10yn0zx">
+          <text>[18..25]</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0zzlf9o">
+          <text>"Premium"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_02iphhu">
+        <inputEntry id="UnaryTests_1pryqpo">
+          <text>"independiente"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_180kkwf">
+          <text>&gt;25</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1abfwrn">
+          <text>"Silver"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0w4fbh1">
+        <inputEntry id="UnaryTests_0lhbmu2">
+          <text>"dependiente"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_01stn1v">
+          <text>[18..35]</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1vup4uw">
+          <text>"Silver"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1mo92wy">
+        <inputEntry id="UnaryTests_1hnusu4">
+          <text>"dependiente"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0riq8tz">
+          <text>&gt;35</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0bmd287">
+          <text>"Bronze"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <inputData id="InputData_0s6nitr" name="condicionLaboral" />
+  <inputData id="InputData_1vffqki" name="edad" />
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="DMNColeccion">
+        <dc:Bounds height="80" width="180" x="220" y="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_0eyk33u" dmnElementRef="InputData_0s6nitr">
+        <dc:Bounds height="45" width="125" x="158" y="238" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_1x3iojc" dmnElementRef="InformationRequirement_01ezgxy">
+        <di:waypoint x="221" y="238" />
+        <di:waypoint x="280" y="180" />
+        <di:waypoint x="280" y="160" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNShape id="DMNShape_1tc7g92" dmnElementRef="InputData_1vffqki">
+        <dc:Bounds height="45" width="125" x="338" y="239" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_019rgi0" dmnElementRef="InformationRequirement_0bwyt8k">
+        <di:waypoint x="401" y="239" />
+        <di:waypoint x="340" y="180" />
+        <di:waypoint x="340" y="160" />
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1yn7mb8" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.20.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.21.0">
+  <bpmn:process id="ColeccionVariables" isExecutable="true" camunda:historyTimeToLive="P360D">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0g33g51</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0g33g51" sourceRef="StartEvent_1" targetRef="Activity_1ebzrb7" />
+    <bpmn:businessRuleTask id="Activity_1ebzrb7" name="Determinar colección variables" camunda:resultVariable="resultadoColeccion" camunda:decisionRef="DMNColeccion">
+      <bpmn:extensionElements>
+        <camunda:executionListener class="com.example.workflow.MyFirstService" event="end" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0g33g51</bpmn:incoming>
+      <bpmn:outgoing>Flow_0duorrl</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true" camunda:collection="cliente" camunda:elementVariable="itemCliente" />
+    </bpmn:businessRuleTask>
+    <bpmn:endEvent id="Event_1wmdmjt">
+      <bpmn:incoming>Flow_1jrur1g</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:subProcess id="Activity_1lnz9f5">
+      <bpmn:incoming>Flow_1kij60k</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jrur1g</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:collection="${resultadoColeccion.prop(&#34;values&#34;).elements()}" camunda:elementVariable="colName" />
+      <bpmn:endEvent id="Event_0e3k58y">
+        <bpmn:incoming>Flow_0lbpn2y</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:userTask id="Activity_17rmiyo" name="Validar datos:&#10;${colName}">
+        <bpmn:incoming>Flow_0grq02a</bpmn:incoming>
+        <bpmn:outgoing>Flow_0lbpn2y</bpmn:outgoing>
+      </bpmn:userTask>
+      <bpmn:sequenceFlow id="Flow_0lbpn2y" sourceRef="Activity_17rmiyo" targetRef="Event_0e3k58y" />
+      <bpmn:startEvent id="Event_0cdhq4z">
+        <bpmn:outgoing>Flow_0grq02a</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="Flow_0grq02a" sourceRef="Event_0cdhq4z" targetRef="Activity_17rmiyo" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_1jrur1g" sourceRef="Activity_1lnz9f5" targetRef="Event_1wmdmjt" />
+    <bpmn:sequenceFlow id="Flow_0duorrl" sourceRef="Activity_1ebzrb7" targetRef="Activity_15vh5k8" />
+    <bpmn:userTask id="Activity_15vh5k8" name="Tarea">
+      <bpmn:incoming>Flow_0duorrl</bpmn:incoming>
+      <bpmn:outgoing>Flow_1kij60k</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1kij60k" sourceRef="Activity_15vh5k8" targetRef="Activity_1lnz9f5" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="ColeccionVariables">
+      <bpmndi:BPMNShape id="Event_1wmdmjt_di" bpmnElement="Event_1wmdmjt">
+        <dc:Bounds x="1302" y="172" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="149" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0qg80p2_di" bpmnElement="Activity_1ebzrb7">
+        <dc:Bounds x="300" y="127" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ytjwxb_di" bpmnElement="Activity_15vh5k8">
+        <dc:Bounds x="490" y="127" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0i86vgh" bpmnElement="Activity_1lnz9f5" isExpanded="true">
+        <dc:Bounds x="830" y="80" width="350" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0d652g9" bpmnElement="Event_0e3k58y">
+        <dc:Bounds x="1112" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1jh822t" bpmnElement="Activity_17rmiyo">
+        <dc:Bounds x="970" y="140" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1sluhfp" bpmnElement="Event_0cdhq4z">
+        <dc:Bounds x="870" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_0j3zmy3" bpmnElement="Flow_0lbpn2y">
+        <di:waypoint x="1070" y="180" />
+        <di:waypoint x="1112" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_01q8n5p" bpmnElement="Flow_0grq02a">
+        <di:waypoint x="906" y="180" />
+        <di:waypoint x="970" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0g33g51_di" bpmnElement="Flow_0g33g51">
+        <di:waypoint x="188" y="167" />
+        <di:waypoint x="300" y="167" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jrur1g_di" bpmnElement="Flow_1jrur1g">
+        <di:waypoint x="1180" y="190" />
+        <di:waypoint x="1302" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0duorrl_di" bpmnElement="Flow_0duorrl">
+        <di:waypoint x="400" y="167" />
+        <di:waypoint x="490" y="167" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kij60k_di" bpmnElement="Flow_1kij60k">
+        <di:waypoint x="590" y="167" />
+        <di:waypoint x="830" y="167" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
