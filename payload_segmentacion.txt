@@ -1,0 +1,13 @@
+{
+    "businessKey": "1000",
+    "variables": {
+        "contactosMailerLite": {
+            "type": "Object",
+            "value": "[ { \"nombre\":\"LUIS PANCHI\" ,\"correo\":\"martinezasociadoslitigacionco1@gmail.com\",\"condicionLaboral\":\"Dependiente\",\"descargaPDF\":\"NO\"},{ \"nombre\":\"Rodolfo Villanueva Surco\" ,\"correo\":\"rovisur@gmail.com\",\"condicionLaboral\":\"Independiente\",\"descargaPDF\":\"SI\"}]",
+            "valueInfo": {
+                "objectTypeName": "java.util.ArrayList",
+                "serializationDataFormat": "application/json"
+            }
+        }
+    }
+}
