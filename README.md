@@ -1,0 +1,1 @@
+Output Worker :  [ {segmentacion:"decision", nombre: "LUIS PANCHI", correo:"martinezasociadoslitigacionco1@gmail.com" },   {segmentacion:"consideracion", nombre: "Rodolfo Villanueva Surco", correo:"rovisur@gmail.com" }                        ]
